@@ -1,4 +1,7 @@
 using System.Text.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 public static class SetsAndMaps
 {
@@ -19,10 +22,26 @@ public static class SetsAndMaps
     /// that there were no duplicates) and therefore should not be returned.
     /// </summary>
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
-    public static string[] FindPairs(string[] words)
+    public static List<string> FindPairs(List<string> words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var set = new HashSet<string>(words);
+        var result = new List<string>();
+        var used = new HashSet<string>();
+
+        foreach (var word in words)
+        {
+            if (used.Contains(word)) continue;
+            if (word[0] == word[1]) continue; // skip same letter words
+
+            var reversed = new string(new[] { word[1], word[0] });
+            if (set.Contains(reversed) && !used.Contains(reversed))
+            {
+                result.Add($"{word} & {reversed}");
+                used.Add(word);
+                used.Add(reversed);
+            }
+        }
+        return result;
     }
 
     /// <summary>
@@ -38,14 +57,18 @@ public static class SetsAndMaps
     /// <returns>fixed array of divisors</returns>
     public static Dictionary<string, int> SummarizeDegrees(string filename)
     {
-        var degrees = new Dictionary<string, int>();
+        var summary = new Dictionary<string, int>();
         foreach (var line in File.ReadLines(filename))
         {
-            var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            var columns = line.Split(',');
+            if (columns.Length < 4) continue;
+            var degree = columns[3].Trim();
+            if (!summary.ContainsKey(degree))
+                summary[degree] = 0;
+            summary[degree]++;
         }
-
-        return degrees;
+        return summary;
     }
 
     /// <summary>
@@ -66,8 +89,23 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var w1 = word1.Replace(" ", "").ToLower();
+        var w2 = word2.Replace(" ", "").ToLower();
+        if (w1.Length != w2.Length) return false;
+
+        var dict = new Dictionary<char, int>();
+        foreach (var c in w1)
+        {
+            if (!dict.ContainsKey(c)) dict[c] = 0;
+            dict[c]++;
+        }
+        foreach (var c in w2)
+        {
+            if (!dict.ContainsKey(c)) return false;
+            dict[c]--;
+            if (dict[c] < 0) return false;
+        }
+        return dict.Values.All(v => v == 0);
     }
 
     /// <summary>
