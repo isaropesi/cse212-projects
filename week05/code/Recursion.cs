@@ -129,15 +129,28 @@ public static class Recursion
     {
         // If this is the first time running the function, then we need
         // to initialize the currPath list.
-        if (currPath == null) {
+        if (currPath == null)
+        {
             currPath = new List<ValueTuple<int, int>>();
         }
-        
+
         // currPath.Add((1,2)); // Use this syntax to add to the current path
 
         // TODO Start Problem 5
         // ADD CODE HERE
 
         // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+    }
+
+    /// <summary>
+    /// Example: Recursive sum from 1 to n.
+    /// The "smaller version" is sum from 1 to n-1.
+    /// The base case is when n <= 0, return 0.
+    /// </summary>
+    public static int SumToN(int n)
+    {
+        if (n <= 0)
+            return 0; // base case
+        return n + SumToN(n - 1); // recursive case
     }
 }
